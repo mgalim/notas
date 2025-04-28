@@ -1,0 +1,30 @@
+@base_url=http://localhost:8000/notes
+
+### Obtener notas
+GET {{base_url}}
+
+
+### Obtener una nota
+GET {{base_url}}/1
+
+
+### Crear una nota
+POST {{base_url}}
+Content-type: application/json
+
+{
+    "content": "Esto es una prueba de POST."
+}
+
+
+### Actualizar una nota
+PATCH {{base_url}}/1
+Content-type: application/json
+
+{
+    "important":false
+}
+
+
+### Borrar una pelicula
+DELETE {{base_url}}/5
