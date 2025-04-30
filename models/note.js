@@ -2,7 +2,12 @@ const notes = require('../notes.json');
 const { generateId } = require('../utils/noteHelper.js');
 
 class NoteModel {
-  static async getAll() {
+  static async getAll({ category }) {
+    if (category) {
+      return notes.filter((note) =>
+        note.category.some((g) => g.toLowerCase() === category.toLowerCase()),
+      );
+    }
     return notes;
   }
 
@@ -23,7 +28,9 @@ class NoteModel {
 
   static async delete(id) {
     const noteIndex = notes.findIndex((note) => note.id === parseInt(id));
-    return noteIndex === -1 ? false : notes.splice(noteIndex, 1);
+    if (noteIndex === -1) return false;
+    notes.splice(noteIndex, 1);
+    return true;
   }
 
   static async update(id, input) {
