@@ -1,4 +1,4 @@
-const NoteModel = require('../models/note.js');
+const NoteModel = require('../models/mock/note.js');
 const { validateNote, validatePartialNote } = require('../schemas/notes.js');
 
 class NoteController {
@@ -41,7 +41,8 @@ class NoteController {
     const result = validatePartialNote(req.body);
 
     if (!result.success) {
-      return res.status(400).json({ error: result.error.errors });
+      const errors = result.error.errors.map((e) => e.message);
+      return res.status(400).json({ error: errors });
     }
 
     const id = req.params.id;

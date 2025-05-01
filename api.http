@@ -18,7 +18,7 @@ Content-type: application/json
 
 {
     "content": "MySql es una base de datos relacional.",
-    "category":["Base de dato"]
+    "category":["Bases de Datos"]
 }
 
 

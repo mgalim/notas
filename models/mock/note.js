@@ -1,5 +1,5 @@
-const notes = require('../notes.json');
-const { generateId } = require('../utils/noteHelper.js');
+const notes = require('../../notes.json');
+const { generateId } = require('../../utils/noteHelper.js');
 
 class NoteModel {
   static async getAll({ category }) {
