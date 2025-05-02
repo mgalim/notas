@@ -1,18 +1,26 @@
-const NoteModel = require('../models/mock/note.js');
-const { validateNote, validatePartialNote } = require('../schemas/notes.js');
+// Import { NoteModel } from '../models/mock/note.js';
+import { NoteModel } from '../models/mysql/note.js';
+import { validateNote, validatePartialNote } from '../schemas/notes.js';
 
-class NoteController {
+export class NoteController {
   static async getAll(req, res) {
-    const { category } = req.query;
-    const notes = await NoteModel.getAll({ category });
-    res.json(notes);
+    try {
+      const { category } = req.query;
+      const notes = await NoteModel.getAll({ category });
+      res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
   }
   static async getById(req, res) {
-    const id = req.params.id;
-    const note = await NoteModel.getById(id);
+    try {
+      const id = req.params.id;
+      const note = await NoteModel.getById(id);
 
-    if (note) return res.json(note);
-    res.status(404).json({ error: 'Nota no encontrada' });
+      res.json(note);
+    } catch (error) {
+      res.status(400).json({ error: error });
+    }
   }
   static async create(req, res) {
     const result = validateNote(req.body);
@@ -56,5 +64,3 @@ class NoteController {
     res.json(updatedNote);
   }
 }
-
-module.exports = NoteController;

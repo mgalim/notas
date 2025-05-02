@@ -1,7 +1,8 @@
-const notes = require('../../notes.json');
-const { generateId } = require('../../utils/noteHelper.js');
+import { generateId, readJSON } from '../../utils/noteHelper.js';
 
-class NoteModel {
+const notes = readJSON('../notes.json');
+
+export class NoteModel {
   static async getAll({ category }) {
     if (category) {
       return notes.filter((note) =>
@@ -45,5 +46,3 @@ class NoteModel {
     return notes[noteIndex];
   }
 }
-
-module.exports = NoteModel;

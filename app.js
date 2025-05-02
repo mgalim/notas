@@ -1,10 +1,11 @@
-const express = require('express');
+import express, { json } from 'express';
+import { corsMiddleware } from './middlewares/cors.js';
+import { notesRouter } from './routes/notes.js';
+
 const app = express();
-const notesRouter = require('./routes/notes.js');
-const { corsMiddleware } = require('./middlewares/cors.js');
 
 app.disable('x-powered-by');
-app.use(express.json());
+app.use(json());
 app.use(corsMiddleware());
 
 app.use('/notes', notesRouter);

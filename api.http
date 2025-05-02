@@ -5,11 +5,11 @@ GET {{base_url}}
 
 
 ### Obtener notas filtradas
-GET {{base_url}}?category=Programación
+GET {{base_url}}?category=backend
 
 
 ### Obtener una nota
-GET {{base_url}}/1
+GET {{base_url}}/81b74e37-26cc-11f0-acf0-fc3497b6cae4
 
 
 ### Crear una nota
@@ -18,7 +18,8 @@ Content-type: application/json
 
 {
     "content": "MySql es una base de datos relacional.",
-    "category":["Bases de Datos"]
+    "category":["bases de datos"],
+    "rate":6.8
 }
 
 

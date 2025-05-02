@@ -12,6 +12,6 @@ export default defineConfig([
       'capitalized-comments': ['warn', 'always'],
     },
   },
-  { files: ['**/*.js'], languageOptions: { sourceType: 'commonjs' } },
+  { files: ['**/*.js'], languageOptions: { sourceType: 'module' } },
   { files: ['**/*.{js,mjs,cjs}'], languageOptions: { globals: globals.node } },
 ]);
