@@ -66,24 +66,48 @@ export class NoteModel {
   static async create(input) {
     const { content, rate, important, category } = input;
 
-    let query = `INSERT INTO notes (content,rate,important)
- VALUES (?,?,?)`;
-
-    await connection.query(query, [content, rate, important]);
+    const insertQuery = `
+      INSERT INTO notes (content, rate, important)
+      VALUES (?, ?, ?)
+    `;
+    await connection.query(insertQuery, [content, rate, important]);
 
     const [rows] = await connection.execute(
       `
-    SELECT BIN_TO_UUID(id) AS id, content, rate, important, created_at 
-    FROM notes 
-    WHERE content = ? 
-    ORDER BY created_at DESC 
-    LIMIT 1;
-  `,
+      SELECT BIN_TO_UUID(id) AS id, created_at 
+      FROM notes 
+      WHERE content = ? 
+      ORDER BY created_at DESC
+      LIMIT 1;
+      `,
       [content],
     );
 
-    const insertedNote = rows[0];
-    return insertedNote;
+    const noteId = rows[0].id;
+
+    for (const cat of category) {
+      const [categoryResult] = await connection.execute(
+        'SELECT id FROM categories WHERE category_name = ?;',
+        [cat.toLowerCase()],
+      );
+
+      if (categoryResult.length > 0) {
+        const categoryId = categoryResult[0].id;
+        await connection.query(
+          'INSERT INTO notes_categories (note_id, category_id) VALUES (UUID_TO_BIN(?), ?);',
+          [noteId, categoryId],
+        );
+      }
+    }
+
+    return {
+      id: noteId,
+      content,
+      rate,
+      important,
+      category,
+      created_at: rows[0].created_at,
+    };
   }
 
   static async update(id, input) {}
