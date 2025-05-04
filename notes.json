@@ -2,7 +2,7 @@
   {
     "id": 1,
     "content": "Podemos hacer casi cualquier cosa con JavaScript",
-    "category": ["backend", "frontend"],
+    "categories": ["backend", "frontend"],
     "created_at": "2022-05-30T17:30:31.098Z",
     "rate": 10,
     "important": true
@@ -10,7 +10,7 @@
   {
     "id": 2,
     "content": "Node.js utiliza la arquitectura Single Threaded Event Loop",
-    "category": ["backend", "arquitectura"],
+    "categories": ["backend", "arquitectura"],
     "created_at": "2022-05-30T18:39:34.091Z",
     "rate": 7.1,
     "important": true
@@ -18,7 +18,7 @@
   {
     "id": 3,
     "content": "NPM es el gestor de paquetes de Node.js.",
-    "category": ["herramientas"],
+    "categories": ["herramientas"],
     "created_at": "2022-05-30T19:20:14.298Z",
     "rate": 8.4,
     "important": false
@@ -26,7 +26,7 @@
   {
     "id": 4,
     "content": "Express.js es un framework de aplicaciones web Node.js",
-    "category": ["frameworks", "backend"],
+    "categories": ["frameworks", "backend"],
     "created_at": "2022-05-30T19:20:14.298Z",
     "rate": 6.3,
     "important": true

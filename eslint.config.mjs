@@ -9,7 +9,6 @@ export default defineConfig([
     extends: ['js/recommended'],
     rules: {
       'no-unused-vars': 'warn',
-      'capitalized-comments': ['warn', 'always'],
     },
   },
   { files: ['**/*.js'], languageOptions: { sourceType: 'module' } },

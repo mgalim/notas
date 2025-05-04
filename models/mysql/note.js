@@ -36,7 +36,8 @@ export class NoteModel {
       const [notes] = await connection.query(query, params);
       return notes;
     } catch (error) {
-      throw error.message;
+      console.log(error);
+      throw new Error('Error al obtener las notas');
     }
   }
 
@@ -59,58 +60,124 @@ export class NoteModel {
       const [result] = await connection.query(query, [id]);
       return result[0] || null;
     } catch (error) {
-      throw error.sqlMessage;
+      console.log(error);
+      throw new Error('Error al obtener la nota');
     }
   }
 
   static async create(input) {
-    const { content, rate, important, category } = input;
+    const { content, rate, important, categories } = input;
 
-    const insertQuery = `
-      INSERT INTO notes (content, rate, important)
-      VALUES (?, ?, ?)
+    try {
+      await connection.beginTransaction();
+
+      const [uuidResult] = await connection.query('SELECT UUID() uuid;');
+      const [{ uuid }] = uuidResult;
+
+      const insertQuery = `
+      INSERT INTO notes (id,content, rate, important)
+      VALUES (UUID_TO_BIN(?),?, ?, ?)
     `;
-    await connection.query(insertQuery, [content, rate, important]);
+      await connection.query(insertQuery, [uuid, content, rate, important]);
 
-    const [rows] = await connection.execute(
-      `
-      SELECT BIN_TO_UUID(id) AS id, created_at 
-      FROM notes 
-      WHERE content = ? 
-      ORDER BY created_at DESC
-      LIMIT 1;
-      `,
-      [content],
-    );
+      for (const category of categories) {
+        const [categoryResult] = await connection.execute(
+          'SELECT id FROM categories WHERE category_name = ?;',
+          [category.toLowerCase()],
+        );
 
-    const noteId = rows[0].id;
+        if (categoryResult.length > 0) {
+          const categoryId = categoryResult[0].id;
+          await connection.query(
+            'INSERT INTO notes_categories (note_id, category_id) VALUES (UUID_TO_BIN(?), ?);',
+            [uuid, categoryId],
+          );
+        }
+      }
+      await connection.commit();
 
-    for (const cat of category) {
-      const [categoryResult] = await connection.execute(
-        'SELECT id FROM categories WHERE category_name = ?;',
-        [cat.toLowerCase()],
+      const [notes] = await connection.query(
+        `SELECT BIN_TO_UUID(id) id, content, rate, important, created_at
+          FROM notes WHERE id = UUID_TO_BIN(?);`,
+        [uuid],
       );
 
-      if (categoryResult.length > 0) {
-        const categoryId = categoryResult[0].id;
-        await connection.query(
-          'INSERT INTO notes_categories (note_id, category_id) VALUES (UUID_TO_BIN(?), ?);',
-          [noteId, categoryId],
-        );
-      }
+      return { ...notes[0], categories };
+    } catch (error) {
+      await connection.rollback();
+      console.log(error);
+      throw new Error('Error creando nota');
+      // TODO: implementar servicio interno sendLog(e)
     }
-
-    return {
-      id: noteId,
-      content,
-      rate,
-      important,
-      category,
-      created_at: rows[0].created_at,
-    };
   }
 
-  static async update(id, input) {}
+  static async update(id, input) {
+    const updates = [];
+    const params = [];
+
+    try {
+      for (const [key, value] of Object.entries(input)) {
+        if (key !== 'categories') {
+          updates.push(`${key} = ?`);
+          params.push(value);
+        }
+      }
+      if (updates.length > 0) {
+        await connection.query(
+          `UPDATE notes
+        SET ${updates.join(', ')}
+        WHERE id = UUID_TO_BIN('${id}')
+      `,
+          params,
+        );
+      }
+
+      if (input.categories) {
+        await connection.query(
+          `DELETE FROM notes_categories WHERE note_id = UUID_TO_BIN(?)`,
+          [id],
+        );
+
+        for (const category of input.categories) {
+          const [categoryResult] = await connection.execute(
+            'SELECT id FROM categories WHERE category_name = ?;',
+            [category.toLowerCase()],
+          );
+
+          if (categoryResult.length > 0) {
+            const categoryId = categoryResult[0].id;
+            await connection.query(
+              'INSERT INTO notes_categories (note_id, category_id) VALUES (UUID_TO_BIN(?), ?);',
+              [id, categoryId],
+            );
+          }
+        }
+      }
+
+      let query = `
+    SELECT 
+    BIN_TO_UUID(n.id) AS id,
+    n.content,
+    n.rate,
+    n.important,
+    n.created_at,
+    JSON_ARRAYAGG(c.category_name) AS categories
+    FROM notes n
+    LEFT JOIN notes_categories nc ON nc.note_id = n.id
+    LEFT JOIN categories c ON c.id = nc.category_id
+    WHERE n.id = UUID_TO_BIN(?)
+    GROUP BY n.id`;
+
+      const [result] = await connection.query(query, [id]);
+
+      if (result.length === 0) return false;
+
+      return result[0];
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error actualizando la nota');
+    }
+  }
 
   static async delete(id) {}
 }

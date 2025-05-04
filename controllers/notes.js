@@ -54,13 +54,16 @@ export class NoteController {
     }
 
     const id = req.params.id;
+    try {
+      const updatedNote = await NoteModel.update(id, result.data);
 
-    const updatedNote = await NoteModel.update(id, result.data);
+      if (updatedNote === false) {
+        return res.status(404).json({ error: 'Nota no encontrada' });
+      }
 
-    if (updatedNote === false) {
-      return res.status(400).json({ error: 'Nota no encontrada' });
+      res.status(200).json(updatedNote);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-
-    res.json(updatedNote);
   }
 }

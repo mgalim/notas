@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const CATEGORIES = [
+const categoryList = [
   'arquitectura',
   'herramientas',
   'frameworks',
@@ -14,8 +14,8 @@ const noteSchema = z.object({
     required_error: 'Content es requerido',
     invalid_type_error: 'Content debe ser string.',
   }),
-  category: z
-    .array(z.enum(CATEGORIES), {
+  categories: z
+    .array(z.enum(categoryList), {
       required_error: 'Categoria es requerida',
       invalid_type_error: 'Debe tener al menos una categoria.',
     })

@@ -18,17 +18,17 @@ Content-type: application/json
 
 {
     "content": "MySql es una base de datos relacional.",
-    "category":["bases de datos"],
+    "categories":["bases de datos"],
     "rate":6.8
 }
 
 
 ### Actualizar una nota
-PATCH {{base_url}}/1
+PATCH {{base_url}}/81b74e37-26cc-11f0-acf0-fc3497b6cae4
 Content-type: application/json
 
-{
-    "important":false
+{   "rate":8.0,
+    "important":false,
 }
 
 
