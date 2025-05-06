@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import { NoteController } from '../controllers/notes.js';
 
-export const notesRouter = Router();
+export const createNoteRouter = ({ noteModel }) => {
+  const notesRouter = Router();
 
-notesRouter.get('/', NoteController.getAll);
-notesRouter.post('/', NoteController.create);
+  const noteController = new NoteController({ noteModel });
 
-notesRouter.get('/:id', NoteController.getById);
-notesRouter.delete('/:id', NoteController.delete);
-notesRouter.patch('/:id', NoteController.update);
+  notesRouter.get('/', noteController.getAll);
+  notesRouter.post('/', noteController.create);
+
+  notesRouter.get('/:id', noteController.getById);
+  notesRouter.delete('/:id', noteController.delete);
+  notesRouter.patch('/:id', noteController.update);
+
+  return notesRouter;
+};

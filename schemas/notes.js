@@ -28,6 +28,7 @@ const noteSchema = z.object({
   important: z
     .boolean({ invalid_type_error: 'important debe ser booleano' })
     .default(false),
+  created_at: z.date().default(() => new Date()),
 });
 
 export function validateNote(input) {

@@ -1,28 +1,34 @@
-// Import { NoteModel } from '../models/mock/note.js';
-import { NoteModel } from '../models/mysql/note.js';
 import { validateNote, validatePartialNote } from '../schemas/notes.js';
 
 export class NoteController {
-  static async getAll(req, res) {
+  constructor({ noteModel }) {
+    this.noteModel = noteModel;
+  }
+
+  getAll = async (req, res) => {
     try {
       const { category } = req.query;
-      const notes = await NoteModel.getAll({ category });
+      const notes = await this.noteModel.getAll({ category });
       res.json(notes);
     } catch (error) {
       res.status(500).json({ error: error });
     }
-  }
-  static async getById(req, res) {
+  };
+  getById = async (req, res) => {
     try {
       const id = req.params.id;
-      const note = await NoteModel.getById(id);
+      const note = await this.noteModel.getById(id);
+
+      if (note === null) {
+        return res.status(404).json({ error: 'Nota no encontrada' });
+      }
 
       res.json(note);
     } catch (error) {
       res.status(400).json({ error: error });
     }
-  }
-  static async create(req, res) {
+  };
+  create = async (req, res) => {
     const result = validateNote(req.body);
 
     if (!result.success) {
@@ -30,22 +36,26 @@ export class NoteController {
       return res.status(400).json({ error: errors });
     }
 
-    const newNote = await NoteModel.create(result.data);
+    const newNote = await this.noteModel.create(result.data);
     res.status(201).json(newNote);
-  }
+  };
 
-  static async delete(req, res) {
+  delete = async (req, res) => {
     const id = req.params.id;
-    const result = await NoteModel.delete(id);
+    try {
+      const result = await this.noteModel.delete(id);
 
-    if (result === false) {
-      return res.status(404).json({ error: 'Nota no encontrada' });
+      if (result === false) {
+        return res.status(404).json({ error: 'Nota no encontrada' });
+      }
+
+      res.json({ message: 'Nota borrada.' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
+  };
 
-    res.json({ message: 'Nota borrada.' });
-  }
-
-  static async update(req, res) {
+  update = async (req, res) => {
     const result = validatePartialNote(req.body);
 
     if (!result.success) {
@@ -55,7 +65,7 @@ export class NoteController {
 
     const id = req.params.id;
     try {
-      const updatedNote = await NoteModel.update(id, result.data);
+      const updatedNote = await this.noteModel.update(id, result.data);
 
       if (updatedNote === false) {
         return res.status(404).json({ error: 'Nota no encontrada' });
@@ -65,5 +75,5 @@ export class NoteController {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  };
 }

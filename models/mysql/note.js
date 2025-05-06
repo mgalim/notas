@@ -170,14 +170,24 @@ export class NoteModel {
 
       const [result] = await connection.query(query, [id]);
 
-      if (result.length === 0) return false;
-
-      return result[0];
+      return result[0] || false;
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       throw new Error('Error actualizando la nota');
     }
   }
 
-  static async delete(id) {}
+  static async delete(id) {
+    try {
+      const [result] = await connection.query(
+        'DELETE FROM notes WHERE id = UUID_TO_BIN(?)',
+        [id],
+      );
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error(error.message);
+      throw new Error('Error al eliminar la nota');
+    }
+  }
 }
