@@ -1,4 +1,4 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
 const uri = process.env.MONGODB_URI;
 
 const client = new MongoClient(uri, {
@@ -39,5 +39,42 @@ export class NoteModel {
     }
 
     return db.find({}).toArray();
+  }
+
+  static async getById(id) {
+    const db = await connect();
+    const objectId = ObjectId.createFromHexString(id);
+    return db.findOne({ _id: objectId });
+  }
+
+  static async create(input) {
+    const db = await connect();
+    const { insertedId } = await db.insertOne(input);
+
+    return {
+      _id: insertedId,
+      ...input,
+    };
+  }
+
+  static async delete(id) {
+    const db = await connect();
+    const objectId = ObjectId.createFromHexString(id);
+    const { deletedCount } = await db.deleteOne({ _id: objectId });
+    return deletedCount > 0;
+  }
+
+  static async update(id, input) {
+    const db = await connect();
+    const objectId = ObjectId.createFromHexString(id);
+
+    const result = await db.findOneAndUpdate(
+      { _id: objectId },
+      { $set: input },
+      { returnDocument: 'after' },
+    );
+
+    if (!result) return false;
+    return result;
   }
 }

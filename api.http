@@ -9,7 +9,7 @@ GET {{base_url}}?category=frontend
 
 
 ### Obtener una nota
-GET {{base_url}}/81b74e37-26cc-11f0-acf0-fc3497b6cae4
+GET {{base_url}}/68194a11c3ae9bccc143d847
 
 
 ### Crear una nota
@@ -24,14 +24,14 @@ Content-type: application/json
 
 
 ### Actualizar una nota
-PATCH {{base_url}}/81b74e37-26cc-11f0-acf0-fc3497b6cae6
+PATCH {{base_url}}/68194a11c3ae9bccc143d847
 Content-type: application/json
 
 { 
     "rate":8.0,
-    "important":false
+    "important":true
 }
 
 
 ### Borrar una pelicula
-DELETE {{base_url}}/271e6118-29ed-11f0-baff-fc3497b6cae4
+DELETE {{base_url}}/681bf721897a3bde1518374b
