@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch server-prod",
+    "start": "node server-prod",
     "start:mysql": "node --watch server-with-sql",
     "start:local": "node --watch server-with-local"
   },
