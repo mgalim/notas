@@ -23,15 +23,16 @@ Content-type: application/json
 }
 
 
+### Borrar una pelicula
+DELETE {{base_url}}/681fb7a7f304136bc2b1c7e6
+
+
 ### Actualizar una nota
 PATCH {{base_url}}/68194a11c3ae9bccc143d847
 Content-type: application/json
 
 { 
     "rate":8.0,
-    "important":true
+    "important":false
 }
 
-
-### Borrar una pelicula
-DELETE {{base_url}}/681bf721897a3bde1518374b
