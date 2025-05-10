@@ -11,9 +11,10 @@ export class NoteController {
       const notes = await this.noteModel.getAll({ category });
       res.json(notes);
     } catch (error) {
-      res.status(500).json({ error: error });
+      res.status(500).json({ error: error.message });
     }
   };
+
   getById = async (req, res) => {
     try {
       const id = req.params.id;
@@ -25,9 +26,10 @@ export class NoteController {
 
       res.json(note);
     } catch (error) {
-      res.status(400).json({ error: error });
+      res.status(500).json({ error: error.message });
     }
   };
+
   create = async (req, res) => {
     const result = validateNote(req.body);
 
@@ -36,12 +38,17 @@ export class NoteController {
       return res.status(400).json({ error: errors });
     }
 
-    const newNote = await this.noteModel.create(result.data);
-    res.status(201).json(newNote);
+    try {
+      const newNote = await this.noteModel.create(result.data);
+      res.status(201).json(newNote);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   };
 
   delete = async (req, res) => {
     const id = req.params.id;
+
     try {
       const result = await this.noteModel.delete(id);
 
@@ -64,6 +71,7 @@ export class NoteController {
     }
 
     const id = req.params.id;
+
     try {
       const updatedNote = await this.noteModel.update(id, result.data);
 

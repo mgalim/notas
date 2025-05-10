@@ -8,7 +8,13 @@ const config = {
   database: 'notes',
 };
 
-const connection = await createConnection(config);
+let connection;
+
+try {
+  connection = await createConnection(config);
+} catch (error) {
+  console.log('Error al conectar a MySQL: ', error.code);
+}
 
 export class NoteModel {
   static async getAll({ category }) {
