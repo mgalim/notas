@@ -1,19 +1,20 @@
-@base_url=http://localhost:8000/notes
+@base_url=http://localhost:8000
 
 ### Obtener notas
-GET {{base_url}}
+GET {{base_url}}/notes
 
 
 ### Obtener notas filtradas
-GET {{base_url}}?category=frontend
+GET {{base_url}}/notes?category=frontend
 
 
 ### Obtener una nota
-GET {{base_url}}/68194a11c3ae9bccc143d847
+GET {{base_url}}/notes/68194a11c3ae9bccc143d847
 
 
 ### Crear una nota
-POST {{base_url}}
+# @name createNote
+POST {{base_url}}/notes
 Content-type: application/json
 
 {
@@ -22,13 +23,11 @@ Content-type: application/json
     "rate":6.8
 }
 
-
-### Borrar una pelicula
-DELETE {{base_url}}/681fb7a7f304136bc2b1c7e6
-
+### Guardar el id de la respuesta
+@noteID = {{createNote.response.body.id}}
 
 ### Actualizar una nota
-PATCH {{base_url}}/68194a11c3ae9bccc143d847
+PATCH {{base_url}}/notes/{{noteID}}
 Content-type: application/json
 
 { 
@@ -36,3 +35,5 @@ Content-type: application/json
     "important":false
 }
 
+### Borrar una pelicula
+DELETE {{base_url}}/notes/{{noteID}}
